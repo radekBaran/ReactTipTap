@@ -27,7 +27,7 @@ import {
 
 import { Editor } from "@tiptap/react";
 import { type HeadingLevel, headingLevels } from "../types/heading";
-import { setCurrentListType } from "../utils/setCurrentListType";
+import { switchList } from "../utils/setCurrentListType";
 import { sinkListItemSameType } from "../utils/sinkListItemSameType";
 
 interface Props {
@@ -152,12 +152,10 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
           </ToggleButtonGroup>
         </Box>
         <Box>
+          {/* bullet: kropka */}
           <Tooltip title="Lista punktowana (kropka)">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleBulletList().run();
-                setCurrentListType(editor, "bulletList", "disc");
-              }}
+              onClick={() => switchList(editor, "bulletList", "disc")}
               color={
                 editor.isActive("bulletList", { listType: "disc" })
                   ? "primary"
@@ -167,12 +165,11 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <FormatListBulleted />
             </IconButton>
           </Tooltip>
+
+          {/* bullet: kółko */}
           <Tooltip title="Lista punktowana (kółko)">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleBulletList().run();
-                setCurrentListType(editor, "bulletList", "circle");
-              }}
+              onClick={() => switchList(editor, "bulletList", "circle")}
               color={
                 editor.isActive("bulletList", { listType: "circle" })
                   ? "primary"
@@ -182,12 +179,11 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <RadioButtonUnchecked />
             </IconButton>
           </Tooltip>
+
+          {/* bullet: zielony check */}
           <Tooltip title="Lista – zielony check">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleBulletList().run();
-                setCurrentListType(editor, "bulletList", "green-check");
-              }}
+              onClick={() => switchList(editor, "bulletList", "green-check")}
               color={
                 editor.isActive("bulletList", { listType: "green-check" })
                   ? "primary"
@@ -197,12 +193,11 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <CheckCircle sx={{ color: "green" }} />
             </IconButton>
           </Tooltip>
+
+          {/* bullet: czarny check */}
           <Tooltip title="Lista – czarny check">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleBulletList().run();
-                setCurrentListType(editor, "bulletList", "black-check");
-              }}
+              onClick={() => switchList(editor, "bulletList", "black-check")}
               color={
                 editor.isActive("bulletList", { listType: "black-check" })
                   ? "primary"
@@ -212,12 +207,11 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <CheckCircle sx={{ color: "black" }} />
             </IconButton>
           </Tooltip>
+
+          {/* ordered: decimal */}
           <Tooltip title="Lista numerowana (liczby)">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleOrderedList().run();
-                setCurrentListType(editor, "orderedList", "decimal");
-              }}
+              onClick={() => switchList(editor, "orderedList", "decimal")}
               color={
                 editor.isActive("orderedList", { listType: "decimal" })
                   ? "primary"
@@ -227,12 +221,11 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <FormatListNumbered />
             </IconButton>
           </Tooltip>
+
+          {/* ordered: alpha */}
           <Tooltip title="Lista numerowana (alfabetyczna)">
             <IconButton
-              onClick={() => {
-                editor.chain().focus().toggleOrderedList().run();
-                setCurrentListType(editor, "orderedList", "alpha");
-              }}
+              onClick={() => switchList(editor, "orderedList", "alpha")}
               color={
                 editor.isActive("orderedList", { listType: "alpha" })
                   ? "primary"
@@ -242,12 +235,14 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <FormatListNumberedRtl />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Drugi poziom listy">
+
+          {/* Indent / Outdent */}
+          <Tooltip title="Zwiększ wcięcie">
             <IconButton onClick={() => sinkListItemSameType(editor)}>
               <ArrowRight />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Pierwszy poziom listy">
+          <Tooltip title="Zmniejsz wcięcie">
             <IconButton
               onClick={() =>
                 editor.chain().focus().liftListItem("listItem").run()
