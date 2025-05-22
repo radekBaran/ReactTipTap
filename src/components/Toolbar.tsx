@@ -26,10 +26,9 @@ import {
 } from "@mui/icons-material";
 
 import { Editor } from "@tiptap/react";
-import { type HeadingLevel, headingLevels } from "../types/heading";
+import { headingLevels } from "../types/heading";
 import { switchList } from "../utils/setCurrentListType";
 import { sinkListItemSameType } from "../utils/sinkListItemSameType";
-
 interface Props {
   editor: Editor | null;
 }
@@ -39,24 +38,20 @@ const colors = ["#000000", "#808080", "#ff0000", "#ff9800", "#2196f3"] as const;
 export const Toolbar: React.FC<Props> = ({ editor }) => {
   if (!editor) return null;
 
-  const applyColor = (c: string) => editor.chain().focus().setColor(c).run();
-  const applySize = (s: string) =>
-    editor.chain().focus().setMark("fontSize", { fontSize: s }).run();
-  const toggleHead = (lv: HeadingLevel) =>
-    editor.chain().focus().toggleHeading({ level: lv }).run();
-
   const setLink = () => {
     const prev = editor.getAttributes("link").href as string | undefined;
     const url = window.prompt("Wprowadź URL", prev ?? "https://");
     if (url === null) return;
-    url === ""
-      ? editor.chain().focus().extendMarkRange("link").unsetLink().run()
-      : editor
-          .chain()
-          .focus()
-          .extendMarkRange("link")
-          .setLink({ href: url })
-          .run();
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    } else {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url })
+        .run();
+    }
   };
 
   return (
@@ -67,6 +62,7 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
         alignItems="center"
         divider={<Divider orientation="vertical" flexItem />}
       >
+        {/* Bold / Italic / Underline */}
         <Box>
           <Tooltip title="Pogrubienie">
             <IconButton
@@ -93,6 +89,8 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
             </IconButton>
           </Tooltip>
         </Box>
+
+        {/* Text color */}
         <Box>
           <Tooltip title="Kolor tekstu">
             <ToggleButtonGroup exclusive size="small">
@@ -101,7 +99,7 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
                   key={c}
                   value={c}
                   selected={editor.isActive("textStyle", { color: c })}
-                  onClick={() => applyColor(c)}
+                  onClick={() => editor.chain().focus().setColor(c).run()}
                   sx={{ p: 0.5 }}
                 >
                   <Box
@@ -117,42 +115,52 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
             </ToggleButtonGroup>
           </Tooltip>
         </Box>
+
+        {/* Headings & Font size */}
         <Box>
           <Tooltip title="Nagłówki">
             <ToggleButtonGroup exclusive size="small">
-              {headingLevels.map((lvl) => (
+              {headingLevels.map((level) => (
                 <ToggleButton
-                  key={lvl}
-                  value={lvl}
-                  selected={editor.isActive("heading", { level: lvl })}
-                  onClick={() => toggleHead(lvl)}
+                  key={level}
+                  value={level}
+                  selected={editor.isActive("heading", { level })}
+                  onClick={() =>
+                    editor.chain().focus().toggleHeading({ level }).run()
+                  }
                 >
                   <Title fontSize="small" />
-                  {`H${lvl}`}
+                  {`H${level}`}
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
           </Tooltip>
-          <ToggleButtonGroup exclusive size="small">
-            {["16px", "12px"].map((sz) => (
-              <Tooltip
-                title={sz === "16px" ? "Duża czcionka" : "Mała czcionka"}
-              >
+          <Tooltip title="Rozmiar czcionki">
+            <ToggleButtonGroup exclusive size="small">
+              {(["16px", "12px"] as const).map((size) => (
                 <ToggleButton
-                  key={sz}
-                  value={sz}
-                  selected={editor.isActive("fontSize", { fontSize: sz })}
-                  onClick={() => applySize(sz)}
+                  key={size}
+                  value={size}
+                  selected={editor.isActive("fontSize", { fontSize: size })}
+                  onClick={() =>
+                    editor
+                      .chain()
+                      .focus()
+                      .setMark("fontSize", { fontSize: size })
+                      .run()
+                  }
                 >
                   <TextFields fontSize="small" />
-                  {sz.replace("px", "")}
+                  {size.replace("px", "")}
                 </ToggleButton>
-              </Tooltip>
-            ))}
-          </ToggleButtonGroup>
+              ))}
+            </ToggleButtonGroup>
+          </Tooltip>
         </Box>
+
+        {/* Lists */}
         <Box>
-          {/* bullet: kropka */}
+          {/* bullet: disc */}
           <Tooltip title="Lista punktowana (kropka)">
             <IconButton
               onClick={() => switchList(editor, "bulletList", "disc")}
@@ -165,8 +173,7 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <FormatListBulleted />
             </IconButton>
           </Tooltip>
-
-          {/* bullet: kółko */}
+          {/* bullet: circle */}
           <Tooltip title="Lista punktowana (kółko)">
             <IconButton
               onClick={() => switchList(editor, "bulletList", "circle")}
@@ -179,8 +186,7 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <RadioButtonUnchecked />
             </IconButton>
           </Tooltip>
-
-          {/* bullet: zielony check */}
+          {/* bullet: green-check */}
           <Tooltip title="Lista – zielony check">
             <IconButton
               onClick={() => switchList(editor, "bulletList", "green-check")}
@@ -193,8 +199,7 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <CheckCircle sx={{ color: "green" }} />
             </IconButton>
           </Tooltip>
-
-          {/* bullet: czarny check */}
+          {/* bullet: black-check */}
           <Tooltip title="Lista – czarny check">
             <IconButton
               onClick={() => switchList(editor, "bulletList", "black-check")}
@@ -207,7 +212,6 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
               <CheckCircle sx={{ color: "black" }} />
             </IconButton>
           </Tooltip>
-
           {/* ordered: decimal */}
           <Tooltip title="Lista numerowana (liczby)">
             <IconButton
@@ -252,6 +256,8 @@ export const Toolbar: React.FC<Props> = ({ editor }) => {
             </IconButton>
           </Tooltip>
         </Box>
+
+        {/* Link */}
         <Box>
           <Tooltip title="Hiperlink">
             <IconButton

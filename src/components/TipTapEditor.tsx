@@ -31,33 +31,38 @@ export const TipTapEditor: React.FC = () => {
         styles={{
           "ul, ol": {
             margin: 0,
-            marginLeft: "1.5em",
             padding: 0,
+            marginLeft: "1.5em",
             listStylePosition: "outside",
           },
+
           "ul[data-list-type='green-check'], ul[data-list-type='black-check']":
             {
               listStyle: "none",
             },
-          "ul[data-list-type='green-check'] li, ul[data-list-type='black-check'] li":
+
+          "ul[data-list-type='green-check'] > li, ul[data-list-type='black-check'] > li":
             {
               position: "relative",
             },
-          "ul[data-list-type='green-check'] li::before, ul[data-list-type='black-check'] li::before":
-            {
-              position: "absolute",
-              left: "-1.5em",
-              width: "1.5em",
-              textAlign: "center",
-            },
-          "ul[data-list-type='green-check'] li::before": {
+
+          "ul[data-list-type='green-check'] > li::before": {
             content: '"✔"',
             color: "green",
+            position: "absolute",
+            left: "-1.5em",
+            width: "1.5em",
+            textAlign: "center",
           },
-          "ul[data-list-type='black-check'] li::before": {
+          "ul[data-list-type='black-check'] > li::before": {
             content: '"✔"',
             color: "black",
+            position: "absolute",
+            left: "-1.5em",
+            width: "1.5em",
+            textAlign: "center",
           },
+
           ".ProseMirror, .ProseMirror:focus": {
             outline: "none",
             border: "none",
